@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { MarkerService } from './services/marker.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [MarkerService]
 })
 export class AppComponent {
   title: string = 'My first AGM project';
@@ -19,32 +21,10 @@ export class AppComponent {
   markerLng:string;
   markerDraggable:string;
   //markers
-  markers:  marker[] = [
-    {
-      name: 'Company One',
-      lat: 51.678200,
-      lng: 7.809200,
-      draggable: true
+  markers:  marker[];
 
-    },
-    {
-      name: 'Company Two',
-      lat: 51.679200,
-      lng: 7.819200,
-      draggable: true
-
-    },    
-    {
-      name: 'Company Three',
-      lat: 51.688200,
-      lng: 7.808200,
-      draggable: true
-
-    },
-  ];
-
-  constructor(){
-
+  constructor(private _markerService:MarkerService){
+    this.markers = this._markerService.getMarkers();
   }
 
   clickedMarker(marker: marker, index: number) {
@@ -75,6 +55,8 @@ export class AppComponent {
     var newLat = $event.coords.lat;
     var newLng = $event.coords.lng;
 
+    this._markerService.updateMarker(updMarker, newLat, newLng);
+
   }
 
   addMarker() {
@@ -93,6 +75,20 @@ export class AppComponent {
     }
 
     this.markers.push(newMarker);
+    this._markerService.addMarker(newMarker);
+
+  }
+
+    removeMarker(marker){
+      console.log("Removing marker...");
+
+      for(var i = 0; i < this.markers.length; i++) {
+          if (marker.lat == this.markers[i].lat && marker.lng == this.markers[i].lng) {
+              this.markers.splice(i,1);
+          }
+      }
+
+      this._markerService.removeMarker(marker);
 
   }
   
